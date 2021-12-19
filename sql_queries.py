@@ -1,4 +1,4 @@
-# sql_queries.py
+# rest_app/sql_queries.py
 
 hier_rev = """
     DROP TABLE IF EXISTS tempTable;

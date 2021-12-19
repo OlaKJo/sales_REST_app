@@ -1,4 +1,4 @@
-# init_db.py
+# rest_app/init_db.py
 import sqlite3
 import pandas as pd
 from pathlib import Path

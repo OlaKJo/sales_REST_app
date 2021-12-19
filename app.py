@@ -1,4 +1,4 @@
-# app.py
+# rest_app/app.py
 from flask import Flask, request, jsonify, render_template
 import json
 import sqlite3
