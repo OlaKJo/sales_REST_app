@@ -37,7 +37,7 @@ volume = """
     DROP TABLE IF EXISTS resultTable;
     
     CREATE TEMPORARY TABLE IF NOT EXISTS tempTable AS
-    SELECT date, sales.product_id, sales, (product_width * product_length * product_depth) AS prod_volume
+    SELECT date, sales.product_id, sales, (product_width * product_length * product_depth * sales) AS prod_volume
     FROM sales
     JOIN product_hierarchy
         on sales.product_id = product_hierarchy.product_id
