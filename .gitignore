@@ -1,6 +1,7 @@
 .DS_Store
 .env
 .flaskenv
+.idea
 *.pyc
 *.pyo
 env/
