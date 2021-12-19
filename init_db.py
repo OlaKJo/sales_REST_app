@@ -1,7 +1,6 @@
 # rest_app/init_db.py
 import sqlite3
 import pandas as pd
-from pathlib import Path
 
 # In order for the following to work you must have the data files on hand and in the data directory
 
@@ -20,10 +19,10 @@ sqliteCursor.execute('''CREATE TABLE IF NOT EXISTS product_hierarchy (product_id
 
 # load the data into a Pandas DataFrame
 salesData = pd.read_csv('data/sales.csv/sales.csv')
-prodData = pd.read_csv('data/product_hierarchy.csv');
-storeData = pd.read_csv('data/store_cities.csv');
+prodData = pd.read_csv('data/product_hierarchy.csv')
+storeData = pd.read_csv('data/store_cities.csv')
 
 # write the data to sqlite tables in the db
-salesData.to_sql('sales', sqliteConnection, if_exists='append', index = False)
-prodData.to_sql('product_hierarchy', sqliteConnection, if_exists='append', index = False)
-storeData.to_sql('store_cities', sqliteConnection, if_exists='append', index = False)
+salesData.to_sql('sales', sqliteConnection, if_exists='append', index=False)
+prodData.to_sql('product_hierarchy', sqliteConnection, if_exists='append', index=False)
+storeData.to_sql('store_cities', sqliteConnection, if_exists='append', index=False)
