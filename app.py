@@ -1,46 +1,87 @@
 # app.py
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import json
+import sqlite3
 
-
+import sql_queries
 
 app = Flask(__name__)
 
-countries = [
-    {"id": 1, "name": "Thailand", "capital": "Bangkok", "area": 513120},
-    {"id": 2, "name": "Australia", "capital": "Canberra", "area": 7617930},
-    {"id": 3, "name": "Egypt", "capital": "Cairo", "area": 1010408},
-]
+def get_db_connection():
+    conn = sqlite3.connect('data/sales_test.db')
+    #conn.row_factory = sqlite3.Row
+    return conn
+
+@app.get('/query')
+def test_query():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    posts = cur.execute('SELECT * FROM store_cities').fetchall()
+    conn.close()
+    return jsonify(posts);
 
 
-def _find_next_id():
-    return max(country["id"] for country in countries) + 1
+def get_db_query(conn, request_json):
+    json_dict = json.loads(request_json)
+    print(json_dict)
+    print(type(json_dict))
+
+    # hierarchy1_id, date range -> total sales quantity and revenue
+    if "hierarchy1_id" in json_dict :
+        print("hierarchy request received")
+        query = sql_queries.hier_rev.format(json_dict["hierarchy1_id"], json_dict["start_date"], json_dict["end_date"])
+        cur = conn.cursor()
+
+        print("query calculated")
+        print(query)
+
+        cur.executescript(query)
+        posts = cur.execute("SELECT * FROM resultTable").fetchall()
+
+        print("the returned posts")
+        for i in posts:
+            print(i)
+            print(type(i))
+            print(i[0])
+            print(i[1])
+        print(posts[0][0])
+        print(posts[0][1])
+        retString = {"Quantity": posts[0][0], "Revenue": posts[0][1]}
+        return retString
+
+    # city id, date range -> total sales quantity and revenue
+    elif "city_id" in json_dict:
+        print("city_id request received")
+    # product_id, date range -> total volume
+    elif "product_id" in json_dict:
+        print("product_id request received")
+    # (2018 public holiday dates in Sweden -> total revenue)
+    elif "country" in json_dict:
+        print("city_id request received")
+    else:
+        print("No matching request type")
+        return "Record not found", 400
 
 
-@app.get("/countries")
-def get_countries():
-    return jsonify(countries)
+@app.get('/query/<request_json>')
+def json_query(request_json):
+    print(request_json)
+
+    conn = get_db_connection()
+    response = get_db_query(conn, request_json)
+    conn.close()
+    return jsonify(response)
 
 
-@app.post("/countries")
-def add_country():
-    if request.is_json:
-        country = request.get_json()
-        country["id"] = _find_next_id()
-        countries.append(country)
-        return country, 201
-    return {"error": "Request must be JSON"}, 415
-
-
-@app.get('/countries/<country_id>')
-def hello(country_id):
-    return jsonify(countries[int(country_id)])
-
-
-@app.get('/query/<json_string>')
+#@app.get('/countries/<country_id>')
+#def hello(country_id):
+#    return jsonify(countries[int(country_id)])
+#
+#
+@app.get('/test/<json_string>')
 def getJson(json_string):
     y = json.loads(json_string)
 
     # the result is a Python dictionary:
     the_id = y["id"]
-    return jsonify(countries[int(the_id)])
+    return jsonify({"idWas": the_id})
