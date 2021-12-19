@@ -3,28 +3,24 @@ from flask import Flask, request, jsonify, render_template
 import json
 import sqlite3
 
+import get_public_holidays
 import sql_queries
 
 app = Flask(__name__)
 
+
 def get_db_connection():
-    conn = sqlite3.connect('data/sales_test.db')
+    conn = sqlite3.connect('data/sales.db')
     #conn.row_factory = sqlite3.Row
     return conn
 
-@app.get('/query')
-def test_query():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    posts = cur.execute('SELECT * FROM store_cities').fetchall()
-    conn.close()
-    return jsonify(posts);
 
-
-def get_db_query(conn, request_json):
+def query_db(conn, request_json):
     json_dict = json.loads(request_json)
     print(json_dict)
     print(type(json_dict))
+
+    #TODO: Refactor the below code to reduce duplicate code.
 
     # hierarchy1_id, date range -> total sales quantity and revenue
     if "hierarchy1_id" in json_dict :
@@ -72,8 +68,12 @@ def get_db_query(conn, request_json):
         return retString
 
     # (2018 public holiday dates in Sweden -> total revenue)
-    elif "country" in json_dict:
-        print("city_id request received")
+    elif "holidays" in json_dict:
+        print("holiday revenue request received")
+        get_public_holidays.get_helgdagar()
+        vals = get_public_holidays.get_helgdagar()
+        print(vals)
+
     else:
         print("No matching request type")
         return "Record not found", 400
@@ -84,20 +84,6 @@ def json_query(request_json):
     print(request_json)
 
     conn = get_db_connection()
-    response = get_db_query(conn, request_json)
+    response = query_db(conn, request_json)
     conn.close()
     return jsonify(response)
-
-
-#@app.get('/countries/<country_id>')
-#def hello(country_id):
-#    return jsonify(countries[int(country_id)])
-#
-#
-@app.get('/test/<json_string>')
-def getJson(json_string):
-    y = json.loads(json_string)
-
-    # the result is a Python dictionary:
-    the_id = y["id"]
-    return jsonify({"idWas": the_id})

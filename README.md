@@ -4,6 +4,7 @@
 
 ### Requirements
 * Python3
+* Pandas (for init_db.py)
 * Docker
 
 ### Create data base
