@@ -37,24 +37,40 @@ def get_db_query(conn, request_json):
 
         cur.executescript(query)
         posts = cur.execute("SELECT * FROM resultTable").fetchall()
-
-        print("the returned posts")
-        for i in posts:
-            print(i)
-            print(type(i))
-            print(i[0])
-            print(i[1])
-        print(posts[0][0])
-        print(posts[0][1])
         retString = {"Quantity": posts[0][0], "Revenue": posts[0][1]}
+
         return retString
 
     # city id, date range -> total sales quantity and revenue
     elif "city_id" in json_dict:
         print("city_id request received")
+        query = sql_queries.city_rev.format(json_dict["city_id"], json_dict["start_date"], json_dict["end_date"])
+        cur = conn.cursor()
+
+        print("query calculated")
+        print(query)
+
+        cur.executescript(query)
+        posts = cur.execute("SELECT * FROM resultTable").fetchall()
+        retString = {"Quantity": posts[0][0], "Revenue": posts[0][1]}
+
+        return retString
+
     # product_id, date range -> total volume
     elif "product_id" in json_dict:
         print("product_id request received")
+        query = sql_queries.volume.format(json_dict["product_id"], json_dict["start_date"], json_dict["end_date"])
+        cur = conn.cursor()
+
+        print("query calculated")
+        print(query)
+
+        cur.executescript(query)
+        posts = cur.execute("SELECT * FROM resultTable").fetchall()
+        retString = {"TotalVolume": posts[0][0]}
+
+        return retString
+
     # (2018 public holiday dates in Sweden -> total revenue)
     elif "country" in json_dict:
         print("city_id request received")
