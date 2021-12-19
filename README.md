@@ -43,3 +43,5 @@ e.g.
 ```
 127.0.0.1:5000/query/{"product_id":"P0001","start_date":"2017-01-05","end_date":"2017-02-12"}
 ```
+
+In order to access the public holiday revenue request, replace `product_id` above with `holidays`

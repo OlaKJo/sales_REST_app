@@ -47,3 +47,19 @@ volume = """
     SELECT sum(prod_volume) AS total_volume
     FROM tempTable
 """
+
+holidays = """
+    DROP TABLE IF EXISTS tempTable;
+    DROP TABLE IF EXISTS resultTable;
+    
+    CREATE TEMPORARY TABLE IF NOT EXISTS tempTable AS
+    SELECT sales.date, revenue
+    FROM sales
+    JOIN public_holidays 
+        on sales.date = public_holidays.date 
+    WHERE sales IS NOT NULL AND sales != 0; 
+    
+    CREATE TABLE IF NOT EXISTS resultTable AS
+    SELECT sum(revenue) AS total_revenue
+    FROM tempTable
+"""

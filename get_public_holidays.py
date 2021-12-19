@@ -20,18 +20,18 @@ def get_helgdagar(path=data_path):
         with open(path, 'w') as outfile:
             json.dump(r.json(), outfile)
 
-        return r.json()
+        json_obj = r.json()
     else:
         print("helgdagar already exist")
         with open(path, 'r') as file:
-            ret_json = json.load(file)
+            json_obj = json.load(file)
 
-        return ret_json
+    return json_obj['helgdagar']
 
 
 def main():
-        json_obj = get_helgdagar(data_path)
-        print(json_obj['helgdagar'])
+        helgdagar = get_helgdagar(data_path)
+        print(helgdagar)
 
 
 if __name__ == "__main__":

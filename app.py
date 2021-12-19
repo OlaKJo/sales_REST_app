@@ -70,9 +70,34 @@ def query_db(conn, request_json):
     # (2018 public holiday dates in Sweden -> total revenue)
     elif "holidays" in json_dict:
         print("holiday revenue request received")
-        get_public_holidays.get_helgdagar()
-        vals = get_public_holidays.get_helgdagar()
-        print(vals)
+
+        # Create holiday table and add to db
+        holidays_json = get_public_holidays.get_helgdagar()
+        print(holidays_json)
+
+        cur = conn.cursor()
+        cur.execute('''DROP TABLE IF EXISTS public_holidays''')
+        cur.execute('''CREATE TABLE IF NOT EXISTS public_holidays(holiday_name,date)''')
+
+        #return holidays_json
+
+        for entry in holidays_json:
+            print(entry['datum'])
+            cur.execute("INSERT INTO public_holidays(holiday_name, date) VALUES(?, ?)", (entry['helgdag'], entry['datum']))
+
+        # perform db query to get total revenue on public holidays
+        query = sql_queries.holidays
+        cur = conn.cursor()
+
+        print("query calculated")
+        print(query)
+
+        cur.executescript(query)
+        posts = cur.execute("SELECT * FROM resultTable").fetchall()
+        retString = {"TotalVolume": posts[0][0]}
+
+        return retString
+
 
     else:
         print("No matching request type")
