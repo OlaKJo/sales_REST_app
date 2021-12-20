@@ -28,7 +28,7 @@ docker run -d -p 5000:5000 rest_app
 This will run your container detached so that you can access the API in your host
 browser. You may change the port as you wish.
 
-## Accessing the rest_app
+## Accessing the rest_app api
 
 From a browser visit `http://127.0.0.1:5000`
 
@@ -45,3 +45,24 @@ e.g.
 ```
 
 In order to access the public holiday revenue request, replace `product_id` above with `holidays`
+
+### hierarchy1_id and date range-> sales and revenue
+example:
+```
+127.0.0.1:5000/query/{"hierarchy1_id":"H03","start_date":"2017-01-05","end_date":"2017-02-12"}
+```
+### city_id and date range-> sales and revenue
+example:
+```
+127.0.0.1:5000/query/{"city_id":"C013","start_date":"2017-01-05","end_date":"2017-02-12"}
+example:
+```
+### product_id and date range -> volume
+```
+127.0.0.1:5000/query/{"":"P0001","start_date":"2017-01-05","end_date":"2017-02-12"}
+example:
+```
+### holidays -> total revenue for Swedish public holidays
+```
+127.0.0.1:5000/query/{"product_id":"P0001","start_date":"2017-01-05","end_date":"2017-02-12"}
+```
